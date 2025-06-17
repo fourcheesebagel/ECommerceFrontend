@@ -1,15 +1,24 @@
-﻿namespace ClientLibrary.Helper
+﻿using System.Net.Http.Headers;
+
+namespace ClientLibrary.Helper
 {
-    public class HttpClientHelper : IHttpClientHelper
+    public class HttpClientHelper(IHttpClientFactory clientFactory, ITokenService tokenService) : IHttpClientHelper
     {
-        public Task<HttpClient> GetPrivateClientAsync()
+        public async Task<HttpClient> GetPrivateClientAsync()
         {
-            throw new NotImplementedException();
+            var client = clientFactory.CreateClient(Constant.ApiClient.Name);
+            string token = await tokenService.GetJWTTokenAsync(Constant.Cookie.Name);
+            if (string.IsNullOrEmpty(token))
+                return client;
+
+            var newClient = new HttpClient();
+            newClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constant.Authentication.Type, token);
+            return newClient;
         }
 
         public HttpClient GetPublicClient()
         {
-            throw new NotImplementedException();
+            return clientFactory.CreateClient(Constant.ApiClient.Name);
         }
     }
 }
