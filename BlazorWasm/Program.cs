@@ -5,6 +5,7 @@ using ClientLibrary.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using NetcodeHub.Packages.Components.DataGrid;
 using NetcodeHub.Packages.WebAssembly.Storage.Cookie;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -25,4 +26,7 @@ builder.Services.AddHttpClient(Constant.ApiClient.Name, option =>
 }).AddHttpMessageHandler<RefreshTokenHandler>();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddVirtualizationService();
 await builder.Build().RunAsync();

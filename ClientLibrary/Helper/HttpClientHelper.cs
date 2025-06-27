@@ -11,9 +11,8 @@ namespace ClientLibrary.Helper
             if (string.IsNullOrEmpty(token))
                 return client;
 
-            var newClient = new HttpClient();
-            newClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constant.Authentication.Type, token);
-            return newClient;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constant.Authentication.Type, token);
+            return client;
         }
 
         public HttpClient GetPublicClient()

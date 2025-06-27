@@ -75,7 +75,7 @@ namespace ClientLibrary.Services
             if (result.IsSuccessStatusCode)
                 return await apiHelper.GetServiceResponse<IEnumerable<GetCategory>>(result);
             else
-                return [];       
+                return [];
         }
         //public
         public async Task<GetCategory> GetByIdAsync(Guid id)
