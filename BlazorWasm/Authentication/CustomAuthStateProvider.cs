@@ -10,16 +10,23 @@ namespace BlazorWasm.Authentication
         private ClaimsPrincipal _anonymous = new(new ClaimsIdentity()); //default user not authenticated
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            string jwt = await tokenService.GetJWTTokenAsync(Constant.Cookie.Name); //Get JWT from the cookie
-            if (string.IsNullOrEmpty(jwt))
-                return await Task.FromResult(new AuthenticationState(_anonymous)); //return if no jwt
+            try
+            {
+                string jwt = await tokenService.GetJWTTokenAsync(Constant.Cookie.Name); //Get JWT from the cookie
+                if (string.IsNullOrEmpty(jwt))
+                    return await Task.FromResult(new AuthenticationState(_anonymous)); //return if no jwt
 
-            var claims = GetClaims(jwt);
-            if (!claims.Any())
+                var claims = GetClaims(jwt);
+                if (!claims.Any())
+                    return await Task.FromResult(new AuthenticationState(_anonymous));
+
+                var claimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwtAuth"));
+                return await Task.FromResult(new AuthenticationState(claimPrincipal));
+            }
+            catch
+            {
                 return await Task.FromResult(new AuthenticationState(_anonymous));
-
-            var claimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-            return await Task.FromResult(new AuthenticationState(claimPrincipal));
+            } //Try to authenticate user on load, if not then set as an anonymous user
         }
 
         public void NotifyAuthenticationState()
