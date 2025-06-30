@@ -1,5 +1,5 @@
 ﻿@page "/authentication/login"
-
+@page "/authentication/login/{Route}"
 
 <div class="container-fluid m-5 p-5">
     <div class="row">
@@ -30,6 +30,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public string Route { get; set; } = null!;
     string AlertType = string.Empty;
     string Message = string.Empty;
 
@@ -52,6 +54,6 @@
             Constant.Cookie.Days,
             Constant.Cookie.Path);
         (authStateProvider as CustomAuthStateProvider)!.NotifyAuthenticationState();
-        NavManager.NavigateTo("/", true);
+        NavManager.NavigateTo(Route == null! ? "/" : Route, true);
     }
 }

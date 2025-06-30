@@ -17,7 +17,9 @@
                             <p class="price_text">Price <span style="color: #262626;">$ @product.Price</span></p>
                             <div class="tshirt_img"><img src="@product.Base64Image" /></div>
                             <div class="btn_main">
-                                <div class="buy_bt"><a href="#"><i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart</a></div>
+                                <div class="buy_bt text-danger" @onclick="() => AddItemToCart(product.Id)">
+                                    <i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart
+                                </div>
                                 <div class="seemore_bt"><a href="#">See More</a></div>
                             </div>
                         </div>
@@ -38,11 +40,29 @@ else
     </div>
 }
 
+<NetcodeHubToast @ref="ToastComponent"
+                 Position="@ToastPosition.Bottom()"
+                 IconClass="fa fa-check"
+                 Persist="true"
+                 Duration="4000" />
+
 @code {
     //this makes the page accept a parameter from previous pages
+    NetcodeHubToast? ToastComponent;
     [Parameter] public string CategoryId { get; set; } = string.Empty;
     public GetCategory SelectedCategory { get; set; } = new();
     IEnumerable<GetProduct> ProductsByCategory = [];
+    List<ProcessCart> MyCarts = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var existingCart = await browserCookieStorageService.GetAsync(Constant.Cart.Name);
+        if (!string.IsNullOrEmpty(existingCart))
+        {
+            MyCarts = JsonSerializer.Deserialize<List<ProcessCart>>(existingCart) ?? new();
+        }
+    }
+
     protected async override Task OnParametersSetAsync() 
     {
         if (string.IsNullOrEmpty(CategoryId))
@@ -50,5 +70,28 @@ else
 
         SelectedCategory = await categoryService.GetByIdAsync(Guid.Parse(CategoryId));
         ProductsByCategory = await categoryService.GetProductsByCategory(Guid.Parse(CategoryId));
+    }
+
+
+    async Task AddItemToCart(Guid productId)
+    {
+        var getCart = MyCarts.FirstOrDefault(x => x.ProductId == productId);
+        if (getCart == null)
+        {
+            MyCarts.Add(new ProcessCart { ProductId = productId, Quantity = 1 });
+            await ToastComponent!.ShowSuccessToast("Cart", "Product Added to Cart!");
+            await SaveCartToCookies();
+        }
+        else
+            await ToastComponent!.ShowInfoToast("Cart", "Product already added to cart!");
+    }
+
+    private async Task SaveCartToCookies()
+    {
+        if (MyCarts.Any())
+        {
+            await browserCookieStorageService
+                .SetAsync(Constant.Cart.Name, JsonSerializer.Serialize(MyCarts), 30, "/");
+        }
     }
 }
