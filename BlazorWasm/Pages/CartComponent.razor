@@ -34,7 +34,7 @@
                                             <td>
                                                 <div class="hstack gap-1">
                                                     <input class="form-control w-25" type="number" value="@(GetProductQuantity(productId))"
-                                                        min="1" @oninput="(e) => HandleInputChange(e, productId)" id="@productId" />
+                                                    min="1" @oninput="(e) => HandleInputChange(e, productId)" id="@productId" />
                                                 </div>
                                             </td>
                                             <td>@(GetProductTotalPrice(item.Id))</td>
@@ -63,21 +63,40 @@
 
         @if (ShowPaymentDialog)
         {
-             <NetcodeHubModal> 
-                 <ButtonTemplate> 
-                     <div class="card border-0"> 
-                         <div class="card-body"> 
-                             <div class="d-flex justify-content-center align-content-center"> 
-                                 @if (Paying != null) 
-                                 { 
-                                     <button class="btn btn-outline-success mr-2">@Paying</button> 
-                                 } 
-                                 <button class="btn btn-danger" @onclick="Cancel">Cancel</button> 
-                             </div> 
-                         </div> 
-                     </div> 
-                 </ButtonTemplate> 
-             </NetcodeHubModal> 
+            <NetcodeHubModal CustomStyle="modalDialog" BootstrapClass="border-warning">
+                <ContentTemplate>
+                    <div class="card">
+                        <div class="card-header">Select Payment Method</div>
+                        <div class="card-body">
+                            @if (PaymentMethods.Any())
+                            {
+                                <ul class="list-group">
+                                    @foreach (var item in PaymentMethods)
+                                    {
+                                        var payment = item;
+                                        <li class="list-group-item list-group-item-action buy_bt" @onclick = "() => SelectedPaymentMethod(payment)">
+                                            @payment.Name
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </ContentTemplate>
+                <ButtonTemplate> 
+                    <div class="card border-0"> 
+                        <div class="card-body"> 
+                            <div class="d-flex justify-content-center align-content-center"> 
+                                @if (Paying != null) 
+                                { 
+                                    <button class="btn btn-outline-success mr-2">@Paying</button> 
+                                } 
+                                <button class="btn btn-danger" @onclick="Cancel">Cancel</button> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </ButtonTemplate> 
+            </NetcodeHubModal> 
         }
     </div>
 </div>
@@ -85,24 +104,24 @@
 
 <style>
     .modalDialog{
-        min-width: 300px;
-        max-width: 500px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1050;
+    min-width: 300px;
+    max-width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
     }
 </style>
 
 <NetcodeHubToast @ref="ToastComponent"
-    Position="@ToastPosition.Bottom()"
-    IconClass="fa fa-check"
-    Persist ="true"
-    Duration="4000"/>
+Position="@ToastPosition.Bottom()"
+IconClass="fa fa-check"
+Persist ="true"
+Duration="4000"/>
 
 @code {
     string Paying = null!;
@@ -209,7 +228,8 @@
         if (success) 
         {
             Paying = null!;
-            NavManager.NavigateTo(paymentLink);
+            await Task.Delay(300); //Delay page navigation to ensure link is ready
+            NavManager.NavigateTo(paymentLink, forceLoad: true);
         }
         else
         {

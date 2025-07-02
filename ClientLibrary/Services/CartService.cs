@@ -35,7 +35,7 @@ namespace ClientLibrary.Services
                 Id = null!,
                 Model = archives
             };
-            var result = await apiHelper.ApiCallTypeCall<IEnumerable<Checkout>>(apiCallModel);
+            var result = await apiHelper.ApiCallTypeCall<IEnumerable<CreateArchive>>(apiCallModel);
             if (result == null)
                 return apiHelper.ConnectionError();
             else
