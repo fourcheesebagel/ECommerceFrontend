@@ -1,0 +1,31 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using ClientLibrary.Helper
+@using ClientLibrary.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using BlazorWasm
+@using BlazorWasm.Layout
+@inject ICategoryService categoryService
+@inject IProductService productService
+@inject NavigationManager NavManager
+@using ClientLibrary.Models.Authentication
+@using NetcodeHub.Packages.Components.Validations.OnInput
+@using Blazored.Typeahead
+@using System.Security.Claims
+@using ClientLibrary.Models.Product
+@using ClientLibrary.Models.Category
+@using NetcodeHub.Packages.WebAssembly.Storage.Cookie
+@inject ICartService cartService
+@using System.Text.Json
+@using NetcodeHub.Packages.Components.Toast
+@using NetcodeHub.Packages.Components.DataGrid
+@using NetcodeHub.Packages.Components.Modal
+@using ClientLibrary.Models.Cart
+@attribute [Authorize(Roles = Constant.Administration.AdminRole)]

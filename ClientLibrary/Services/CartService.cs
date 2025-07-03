@@ -1,6 +1,7 @@
 ﻿using ClientLibrary.Helper;
 using ClientLibrary.Models;
 using ClientLibrary.Models.Cart;
+using ClientLibrary.Models.Category;
 
 namespace ClientLibrary.Services
 {
@@ -22,6 +23,24 @@ namespace ClientLibrary.Services
                 return apiHelper.ConnectionError();
             else
                 return await apiHelper.GetServiceResponse<ServiceResponse>(result);
+        }
+
+        public async Task<IEnumerable<GetArchives>> GetArchives()
+        {
+            var client = await httpClient.GetPrivateClientAsync();
+            var apiCall = new ApiCall
+            {
+                Route = Constant.Cart.GetArchives,
+                Type = Constant.ApiCallType.Get,
+                Client = client,
+                Model = null!,
+                Id = null!
+            };
+            var result = await apiHelper.ApiCallTypeCall<Dummy>(apiCall);
+            if (result.IsSuccessStatusCode)
+                return await apiHelper.GetServiceResponse<IEnumerable<GetArchives>>(result);
+            else
+                return [];
         }
 
         public async Task<ServiceResponse> SaveCheckoutHistory(IEnumerable<CreateArchive> archives)

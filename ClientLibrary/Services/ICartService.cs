@@ -7,5 +7,7 @@ namespace ClientLibrary.Services
     {
         Task<ServiceResponse> Checkout(Checkout checkout);
         Task<ServiceResponse> SaveCheckoutHistory(IEnumerable<CreateArchive> archives);
+
+        Task<IEnumerable<GetArchives>> GetArchives();
     }
 }

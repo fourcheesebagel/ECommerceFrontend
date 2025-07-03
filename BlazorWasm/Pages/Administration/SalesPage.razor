@@ -1,0 +1,6 @@
+﻿@page "/admin"
+@layout AdminLayout
+@code {
+    IEnumerable<GetArchives> Archives = [];
+    protected override async Task OnInitializedAsync() => Archives = await cartService.GetArchives();
+}
