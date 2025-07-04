@@ -2,3 +2,17 @@
 
 <HomeBanner />
 <LatestProductComponent />
+
+@code {
+    [CascadingParameter] Task<AuthenticationState>? AuthState { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = (await AuthState!).User;
+            if (user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value == Constant.Administration.AdminRole)
+                NavManager.NavigateTo("admin");
+        }
+        catch { }
+    }
+}
